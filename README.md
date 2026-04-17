@@ -35,3 +35,23 @@ shovel, light item for visual clearnace, heal box,, ammo,
 
 function
 
+# Concept of each item connector
+Engine (game loop + render + input)
+   │
+   ├── Player.inventory  →  std::vector<Item*>
+   │
+   └── calls → Item::use(Player& player, Map& map)
+                │
+                ▼
+           Item (Tool / Weapon)
+                │
+                ▼
+           Queries Map status
+                │
+                ▼
+           Updates Map data only
+                │
+                ▼
+           Map (pure data storage)
+                ├── grid[y][x].type
+                └── grid[y][x].hasZombie

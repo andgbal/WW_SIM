@@ -2,19 +2,23 @@
 #include "../items/tools.hpp"
 #include "../items/weapons.hpp"
 #include <iostream>
-#include <conio.h>   // For _getch() and _kbhit()
-#include <windows.h> // For Sleep() and system("cls")
+#include <windows.h>
 
 Engine::Engine() : player(25, 25), state(GameState::PLAYING), selectedItemIdx(0), running(true) {
-    // Initial Setup
+    // Hide cursor for cleanliness
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = false;
+    SetConsoleCursorInfo(out, &cursorInfo);
+
     player.inventory.push_back(new Shovel());
     player.inventory.push_back(new Rifle());
     
-    // Spawn random zombies
     for (int i = 0; i < 30; i++) {
         int zx = rand() % map.width;
         int zy = rand() % map.height;
-        if (zx != 25 || zy != 25) { // Don't spawn on player
+        if (zx != 25 || zy != 25) {
             zombies.push_back(Zombie(zx, zy));
             map.getTile(zx, zy)->hasZombie = true;
         }
@@ -28,47 +32,50 @@ void Engine::tick() {
 }
 
 void Engine::render() {
-    // Moves cursor to top-left instead of full clear to reduce flicker
-    COORD cursorPosition; cursorPosition.X = 0; cursorPosition.Y = 0;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPosition);
+    system("cls"); 
 
-    std::cout << "--- TRENCH ZOMBIES | Action Economy System ---\n";
+    std::cout << "--- TRENCH ZOMBIES | STABLE VERSION ---\n";
     
     if (state == GameState::INVENTORY) {
-        std::cout << "\n  [ BACKPACK ]\n  W/S: Scroll | F: Use | Q: Close\n  " << std::string(30, '-') << "\n";
+        std::cout << "\n  [ BACKPACK ]\n  W/S: Scroll | F: Use | Q: Close\n";
+        std::cout << "  ------------------------------\n";
         for (int i = 0; i < (int)player.inventory.size(); i++) {
             std::cout << (i == selectedItemIdx ? " > " : "   ") << player.inventory[i]->name << "\n";
         }
-        // Fill space to prevent ghosting from map
-        for(int i=0; i<10; i++) std::cout << std::string(40, ' ') << "\n";
         return;
     }
 
-    std::cout << "Facing: " << (int)player.facing << " | Move: WASD | Turn: IJKL | Menu: E\n";
+    std::cout << "Controls: WASD (Move) | IJKL (Turn) | E (Menu)\n";
+    std::cout << "Current Action: Waiting for input...\n\n";
     
-    int viewH = 7;  // Vertical radius
-    int viewW = 15; // Horizontal radius
+    // Camera Viewport Settings
+    int viewH = 6; 
+    int viewW = 12;
 
     for (int y = player.pos.y - viewH; y <= player.pos.y + viewH; y++) {
         for (int x = player.pos.x - viewW; x <= player.pos.x + viewW; x++) {
-            // Draw Player
+            
+            // 1. Draw Player (Centered)
             if (x == player.pos.x && y == player.pos.y) {
-                char pSym = (player.facing == Dir::NORTH) ? '^' : 
-                            (player.facing == Dir::SOUTH) ? 'v' : 
-                            (player.facing == Dir::EAST)  ? '>' : '<';
-                std::cout << pSym << " ";
+                if(player.facing == Dir::NORTH)      std::cout << "^ ";
+                else if(player.facing == Dir::SOUTH) std::cout << "v ";
+                else if(player.facing == Dir::EAST)  std::cout << "> ";
+                else                                 std::cout << "< ";
             } 
-            // Draw Out of Bounds
+            // 2. Draw Boundaries
             else if (x < 0 || x >= map.width || y < 0 || y >= map.height) {
-                std::cout << "X ";
+                std::cout << "X "; 
             }
-            // Draw Visible Area
+            // 3. Draw Vision Cone (Light)
             else if (map.inVisionCone(player.pos, player.facing, x, y, 8)) {
+                // Draw whatever is on the tile (Enemy 'E', Trench '#', or Dirt '.')
                 std::cout << map.getTile(x, y)->getSymbol() << " ";
             } 
-            // Draw Darkness
+            // 4. Draw SOLID DARKNESS (Fog)
             else {
-                std::cout << "  ";
+                // Switched to '▒' (char 177) or '#' for maximum compatibility
+                // Let's use '▒' style dots or simple '#'
+                std::cout << "##"; 
             }
         }
         std::cout << "\n";
@@ -76,33 +83,29 @@ void Engine::render() {
 }
 
 void Engine::handleInput() {
-    if (!_kbhit()) return;
+    char in;
+    std::cin >> in; // Back to standard buffered input
 
-    int in = _getch();
     bool tookAction = false;
 
     if (state == GameState::PLAYING) {
-        // Move
         if (in == 'w' && player.pos.y > 0) { player.pos.y--; tookAction = true; }
         else if (in == 's' && player.pos.y < map.height - 1) { player.pos.y++; tookAction = true; }
         else if (in == 'a' && player.pos.x > 0) { player.pos.x--; tookAction = true; }
         else if (in == 'd' && player.pos.x < map.width - 1) { player.pos.x++; tookAction = true; }
-        // Aim/Turn
         else if (in == 'i') { player.facing = Dir::NORTH; tookAction = true; }
         else if (in == 'k') { player.facing = Dir::SOUTH; tookAction = true; }
         else if (in == 'j') { player.facing = Dir::WEST;  tookAction = true; }
         else if (in == 'l') { player.facing = Dir::EAST;  tookAction = true; }
-        // Menu
-        else if (in == 'e') { system("cls"); state = GameState::INVENTORY; }
+        else if (in == 'e') state = GameState::INVENTORY;
         else if (in == 'q') running = false;
     } 
     else if (state == GameState::INVENTORY) {
         if (in == 'w' && selectedItemIdx > 0) selectedItemIdx--;
         else if (in == 's' && selectedItemIdx < (int)player.inventory.size() - 1) selectedItemIdx++;
-        else if (in == 'q') { system("cls"); state = GameState::PLAYING; }
-        else if (in == 'f' || in == 13) {
+        else if (in == 'q') state = GameState::PLAYING;
+        else if (in == 'f') {
             player.inventory[selectedItemIdx]->use(player, map);
-            system("cls");
             state = GameState::PLAYING;
             tookAction = true;
         }
@@ -112,10 +115,9 @@ void Engine::handleInput() {
 }
 
 void Engine::run() {
-    system("cls"); // Initial clear
     while (running) {
         render();
         handleInput();
-        Sleep(30); // Capped at ~33 FPS
+        // No Sleep needed because cin pauses the execution naturally
     }
 }
