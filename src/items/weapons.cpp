@@ -3,9 +3,7 @@
 #include "terrain.hpp"   // Map, Tile
 #include "../entities/character.hpp"    // Player (pos + facing)
 
-Rifle::Rifle() {
-    name = "Rifle";
-}
+Rifle::Rifle() : Item("Rifle") {}
 
 void Rifle::use(Player& player, Map& map) {
     int dx = 0, dy = 0;
