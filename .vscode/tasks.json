@@ -1,0 +1,29 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build WW_sim",
+      "type": "shell",
+      "command": "cl",
+        "args": [
+            "/EHsc",
+            "/std:c++17",
+            "/W3",
+            "/Fe:WW_sim.exe",
+            "/I", "src",
+            "/I", "src/core",
+            "/I", "src/entities",
+            "/I", "src/items",
+            "/I", "src/world",
+            "src\\core\\main.cpp",
+            "src\\core\\engine.cpp",
+            "src\\entities\\character.cpp",
+            "src\\items\\tools.cpp",
+            "src\\items\\weapons.cpp",
+            "src\\world\\terrain.cpp"
+        ],
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}
