@@ -2,6 +2,8 @@
 #include "character.hpp"
 #include <cmath>
 
+
+
 Position Player::getTargetPos(int d) {
     if (facing == Dir::NORTH) return {pos.x, pos.y - d};
     if (facing == Dir::SOUTH) return {pos.x, pos.y + d};

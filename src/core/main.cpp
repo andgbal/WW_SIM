@@ -1,9 +1,12 @@
 #include "core/engine.hpp"
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 int main() {
 
     try {
+        std::srand(std::time(nullptr));
         Engine game;
         game.run();
     } catch (const std::exception& e) {

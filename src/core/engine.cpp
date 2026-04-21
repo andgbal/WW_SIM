@@ -75,7 +75,7 @@ void Engine::render() {
             else {
                 // Switched to '▒' (char 177) or '#' for maximum compatibility
                 // Let's use '▒' style dots or simple '#'
-                std::cout << "##"; 
+                std::cout << "## "; 
             }
         }
         std::cout << "\n";

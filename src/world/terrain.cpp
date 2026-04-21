@@ -8,7 +8,7 @@ Map::Map() {
     grid.resize(height, std::vector<Tile>(width));
     
     // Generate random terrain
-    std::srand(std::time(nullptr));
+    //std::srand(std::time(nullptr));
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             if (std::rand() % 100 < 10) { // 10% chance for a trench

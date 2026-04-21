@@ -1,15 +1,24 @@
+// src/items/tools.cpp
 #include "tools.hpp"
 #include "../entities/character.hpp"
+#include "../world/terrain.hpp"
 #include <iostream>
 
-void Shovel::use(Character& user, Map& map) {
-    Position p = user.getPos();
-    map.grid[p.y][p.x].type = TerrainType::TRENCH;
-    map.grid[p.y][p.x].updateSymbol();
-    std::cout << "Action: Dug a trench!\\n";
+Shovel::Shovel() : Item("Shovel") {}
+
+void Shovel::use(Player& player, Map& map) {
+    Tile* tile = map.getTile(player.pos.x, player.pos.y);
+    if (!tile) return;
+
+    tile->type = TerrainType::TRENCH;
+    // TODO: call tile->updateSymbol() once you implement it
+    std::cout << "Action: Dug a trench!\n";
 }
 
-void HealKit::use(Character& user, Map& map) {
-    user.setHealth(user.getHealth() + 20);
-    std::cout << "Action: Used bandages!\\n";
+HealthKit::HealthKit() : Item("HealthKit") {}
+
+void HealthKit::use(Player& player, Map& map) {
+    // TODO: once Player has health, do player.health += 20;
+    
+    std::cout << "Action: Used bandages! +20 HP\n";
 }

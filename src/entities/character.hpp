@@ -6,8 +6,12 @@
 
 class Character {
 public:
-    Position pos;
-    Character(int x, int y) : pos({x, y}) {}
+    Character(int x, int y, int h) : pos({x, y}), health(h) {}
+    Position pos;    
+    int getHealth() {};
+    void setHealth(int h) {};
+protected:
+    int health;
 };
 
 class Player : public Character {
@@ -15,13 +19,13 @@ public:
     Dir facing = Dir::EAST;
     std::vector<Item*> inventory;
 
-    Player(int x, int y) : Character(x, y) {}
+    Player(int x, int y, int h) : Character(x, y, h) {}
     Position getTargetPos(int distance = 1);
 };
 
 class Zombie : public Character {
 public:
     int detectRadius = 6;
-    Zombie(int x, int y) : Character(x, y) {}
+    Zombie(int x, int y, int h) : Character(x, y, h) {}
     void update(Map& map, Position playerPos);
 };
