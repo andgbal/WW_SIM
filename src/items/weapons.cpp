@@ -1,6 +1,10 @@
 // items/weapons.cpp
 #include "weapons.hpp"
+<<<<<<< HEAD
 #include "../world/terrain.hpp"
+=======
+#include "terrain.hpp"   // Map, Tile
+>>>>>>> 85f98eac95ff206e7b121a3f891d9e2c76d01c55
 #include "../entities/character.hpp"    // Player (pos + facing)
 
 Rifle::Rifle() : Item("Rifle") {}
