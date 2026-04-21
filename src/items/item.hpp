@@ -7,7 +7,10 @@ class Map;
 class Item {
 public:
     std::string name;
-    Item(std::string n) : name(n) {}
+
+    // No default constructor → forces derived classes to set a name
+    explicit Item(std::string n) : name(std::move(n)) {}
+
     virtual ~Item() = default;
     virtual void use(Player& player, Map& map) = 0;
 };

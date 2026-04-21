@@ -5,6 +5,31 @@ item on ground, mines, rile differner status (shoot range, aim %, broken rate), 
 
 different terrain generation
 
+# File Structure
+
+│  README.md
+│  
+└─src
+    ├─core
+    │      engine.cpp
+    │      engine.hpp
+    │      main.cpp
+    │      
+    ├─entities
+    │      character.cpp
+    │      character.hpp
+    │      
+    ├─items
+    │      item.hpp
+    │      tools.cpp
+    │      tools.hpp
+    │      weapons.cpp
+    │      weapons.hpp
+    │      
+    └─world
+            terrain.cpp
+            terrain.hpp
+
 # Map rendering
 Terrain:
 
