@@ -6,8 +6,8 @@
 
 Shovel::Shovel() : Item("Shovel") {}
 
-void Shovel::use(Player& player, Map& map) {
-    Tile* tile = map.getTile(player.pos.x, player.pos.y);
+void Shovel::use(User& user, Map& map) {
+    Tile* tile = map.getTile(user.pos.x, user.pos.y);
     if (!tile) return;
 
     tile->type = TerrainType::TRENCH;
@@ -17,9 +17,9 @@ void Shovel::use(Player& player, Map& map) {
 
 HealthKit::HealthKit() : Item("HealthKit") {}
 
-void HealthKit::use(Player& player, Map& map) {
+void HealthKit::use(User& user, Map& map) {
     // TODO: once Player has health, do player.health += 20;
-    int old = player.getHealth();
-    player.setHealth(old + 20);
+    int old = user.getHealth();
+    user.setHealth(old + 20);
     //std::cout << "Action: Used bandages! +20 HP\n";
 }

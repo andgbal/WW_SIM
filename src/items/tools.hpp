@@ -7,11 +7,11 @@
 class Shovel : public Item {
 public:
     Shovel();                    // calls Item("Shovel")
-    void use(Player& player, Map& map) override;
+    void use(User& user, Map& map) override;
 };
 
 class HealthKit : public Item {
 public:
     HealthKit();                    // calls Item("Shovel")
-    void use(Player& player, Map& map) override;
+    void use(User& user, Map& map) override;
 };

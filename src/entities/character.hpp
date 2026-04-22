@@ -14,12 +14,12 @@ protected:
     int health;
 };
 
-class Player : public Character {
+class User : public Character {
 public:
     Dir facing = Dir::EAST;
     std::vector<Item*> inventory;
 
-    Player(int x, int y, int h = 100) : Character(x, y, h) {}
+    User(int x, int y, int h = 100) : Character(x, y, h) {}
     Position getTargetPos(int distance = 1);
 };
 

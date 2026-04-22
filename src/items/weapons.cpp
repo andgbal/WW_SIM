@@ -5,9 +5,9 @@
 
 Rifle::Rifle() : Item("Rifle") {}
 
-void Rifle::use(Player& player, Map& map) {
+void Rifle::use(User& user, Map& map) {
     int dx = 0, dy = 0;
-    switch (player.facing) {
+    switch (user.facing) {
         case Dir::NORTH: dy = -1; break;
         case Dir::SOUTH: dy =  1; break;
         case Dir::EAST:  dx =  1; break;
@@ -16,8 +16,8 @@ void Rifle::use(Player& player, Map& map) {
 
     // Shoot up to 10 tiles straight ahead
     for (int i = 1; i <= 10; ++i) {
-        int tx = player.pos.x + dx * i;
-        int ty = player.pos.y + dy * i;
+        int tx = user.pos.x + dx * i;
+        int ty = user.pos.y + dy * i;
 
         Tile* tile = map.getTile(tx, ty);
         if (!tile) break;

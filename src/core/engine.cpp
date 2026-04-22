@@ -4,7 +4,7 @@
 #include <iostream>
 #include <windows.h>
 
-Engine::Engine() : player(25, 25), state(GameState::PLAYING), selectedItemIdx(0), running(true) {
+Engine::Engine() : user(25, 25), state(GameState::PLAYING), selectedItemIdx(0), running(true) {
     // Hide cursor for cleanliness
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO cursorInfo;
@@ -12,8 +12,8 @@ Engine::Engine() : player(25, 25), state(GameState::PLAYING), selectedItemIdx(0)
     cursorInfo.bVisible = false;
     SetConsoleCursorInfo(out, &cursorInfo);
 
-    player.inventory.push_back(new Shovel());
-    player.inventory.push_back(new Rifle());
+    //user.inventory.push_back(new Shovel());
+    user.inventory.push_back(new Rifle());
     
     for (int i = 0; i < 30; i++) {
         int zx = rand() % map.width;
@@ -27,7 +27,7 @@ Engine::Engine() : player(25, 25), state(GameState::PLAYING), selectedItemIdx(0)
 
 void Engine::tick() {
     for (auto& z : zombies) {
-        z.update(map, player.pos);
+        z.update(map, user.pos);
     }
 }
 
@@ -39,8 +39,8 @@ void Engine::render() {
     if (state == GameState::INVENTORY) {
         std::cout << "\n  [ BACKPACK ]\n  W/S: Scroll | F: Use | Q: Close\n";
         std::cout << "  ------------------------------\n";
-        for (int i = 0; i < (int)player.inventory.size(); i++) {
-            std::cout << (i == selectedItemIdx ? " > " : "   ") << player.inventory[i]->name << "\n";
+        for (int i = 0; i < (int)user.inventory.size(); i++) {
+            std::cout << (i == selectedItemIdx ? " > " : "   ") << user.inventory[i]->name << "\n";
         }
         return;
     }
@@ -52,14 +52,14 @@ void Engine::render() {
     int viewH = 6; 
     int viewW = 12;
 
-    for (int y = player.pos.y - viewH; y <= player.pos.y + viewH; y++) {
-        for (int x = player.pos.x - viewW; x <= player.pos.x + viewW; x++) {
+    for (int y = user.pos.y - viewH; y <= user.pos.y + viewH; y++) {
+        for (int x = user.pos.x - viewW; x <= user.pos.x + viewW; x++) {
             
             // 1. Draw Player (Centered)
-            if (x == player.pos.x && y == player.pos.y) {
-                if(player.facing == Dir::NORTH)      std::cout << "^ ";
-                else if(player.facing == Dir::SOUTH) std::cout << "v ";
-                else if(player.facing == Dir::EAST)  std::cout << "> ";
+            if (x == user.pos.x && y == user.pos.y) {
+                if(user.facing == Dir::NORTH)      std::cout << "^ ";
+                else if(user.facing == Dir::SOUTH) std::cout << "v ";
+                else if(user.facing == Dir::EAST)  std::cout << "> ";
                 else                                 std::cout << "< ";
             } 
             // 2. Draw Boundaries
@@ -67,7 +67,7 @@ void Engine::render() {
                 std::cout << "X "; 
             }
             // 3. Draw Vision Cone (Light)
-            else if (map.inVisionCone(player.pos, player.facing, x, y, 8)) {
+            else if (map.inVisionCone(user.pos, user.facing, x, y, 8)) {
                 // Draw whatever is on the tile (Enemy 'E', Trench '#', or Dirt '.')
                 std::cout << map.getTile(x, y)->getSymbol() << " ";
             } 
@@ -89,23 +89,23 @@ void Engine::handleInput() {
     bool tookAction = false;
 
     if (state == GameState::PLAYING) {
-        if (in == 'w' && player.pos.y > 0) { player.pos.y--; tookAction = true; }
-        else if (in == 's' && player.pos.y < map.height - 1) { player.pos.y++; tookAction = true; }
-        else if (in == 'a' && player.pos.x > 0) { player.pos.x--; tookAction = true; }
-        else if (in == 'd' && player.pos.x < map.width - 1) { player.pos.x++; tookAction = true; }
-        else if (in == 'i') { player.facing = Dir::NORTH; tookAction = true; }
-        else if (in == 'k') { player.facing = Dir::SOUTH; tookAction = true; }
-        else if (in == 'j') { player.facing = Dir::WEST;  tookAction = true; }
-        else if (in == 'l') { player.facing = Dir::EAST;  tookAction = true; }
+        if (in == 'w' && user.pos.y > 0) { user.pos.y--; tookAction = true; }
+        else if (in == 's' && user.pos.y < map.height - 1) { user.pos.y++; tookAction = true; }
+        else if (in == 'a' && user.pos.x > 0) { user.pos.x--; tookAction = true; }
+        else if (in == 'd' && user.pos.x < map.width - 1) { user.pos.x++; tookAction = true; }
+        else if (in == 'i') { user.facing = Dir::NORTH; tookAction = true; }
+        else if (in == 'k') { user.facing = Dir::SOUTH; tookAction = true; }
+        else if (in == 'j') { user.facing = Dir::WEST;  tookAction = true; }
+        else if (in == 'l') { user.facing = Dir::EAST;  tookAction = true; }
         else if (in == 'e') state = GameState::INVENTORY;
         else if (in == 'q') running = false;
     } 
     else if (state == GameState::INVENTORY) {
         if (in == 'w' && selectedItemIdx > 0) selectedItemIdx--;
-        else if (in == 's' && selectedItemIdx < (int)player.inventory.size() - 1) selectedItemIdx++;
+        else if (in == 's' && selectedItemIdx < (int)user.inventory.size() - 1) selectedItemIdx++;
         else if (in == 'q') state = GameState::PLAYING;
         else if (in == 'f') {
-            player.inventory[selectedItemIdx]->use(player, map);
+            user.inventory[selectedItemIdx]->use(user, map);
             state = GameState::PLAYING;
             tookAction = true;
         }

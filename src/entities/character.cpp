@@ -10,7 +10,7 @@ void Character::setHealth(int h){
     Character::health = h;
 }
 
-Position Player::getTargetPos(int d) {
+Position User::getTargetPos(int d) {
     if (facing == Dir::NORTH) return {pos.x, pos.y - d};
     if (facing == Dir::SOUTH) return {pos.x, pos.y + d};
     if (facing == Dir::EAST)  return {pos.x + d, pos.y};

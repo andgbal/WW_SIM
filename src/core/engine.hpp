@@ -8,7 +8,7 @@ enum class GameState { PLAYING, INVENTORY };
 class Engine {
 private:
     Map map;
-    Player player;
+    User user;
     std::vector<Zombie> zombies;
     GameState state;
     int selectedItemIdx;
