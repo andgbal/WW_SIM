@@ -19,6 +19,7 @@ HealthKit::HealthKit() : Item("HealthKit") {}
 
 void HealthKit::use(Player& player, Map& map) {
     // TODO: once Player has health, do player.health += 20;
-    
-    std::cout << "Action: Used bandages! +20 HP\n";
+    int old = player.getHealth();
+    player.setHealth(old + 20);
+    //std::cout << "Action: Used bandages! +20 HP\n";
 }

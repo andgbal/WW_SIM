@@ -2,7 +2,13 @@
 #include "character.hpp"
 #include <cmath>
 
+int Character::getHealth(){
+    return Character::health;
+}
 
+void Character::setHealth(int h){
+    Character::health = h;
+}
 
 Position Player::getTargetPos(int d) {
     if (facing == Dir::NORTH) return {pos.x, pos.y - d};
