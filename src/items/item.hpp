@@ -7,11 +7,15 @@ class Map;
 class Item {
 public:
     std::string name;
+    float weight;
 
     // No default constructor → forces derived classes to set a name
-    explicit Item(std::string n) : name(std::move(n)) {}
+    explicit Item(std::string n, float weightInit) : name(std::move(n)), weight(weightInit) {}
 
     virtual ~Item() = default;
     virtual void use(User& user, Map& map) = 0;
+
+    float getWeight();
+    std::string getName();
     
 };

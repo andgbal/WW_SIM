@@ -56,18 +56,18 @@ void Gun::reload() {
 // ── Single shot, long range, high damage ──
 class Rifle : public Gun {
 public:
-    Rifle() : Gun("Rifle", 5, 5, 0.85f, 80, 12) {}
+    Rifle() : Gun("Rifle", 5.0f, 5, 5, 0.85f, 80, 12) {}
 };
 
 // ── Burst-style: fires 3 shots per use, lower accuracy ──
 class HalfAutoRifle : public Gun {
 public:
-    HalfAutoRifle() : Gun("HalfAutoRifle", 15, 15, 0.65f, 60, 10) {}
+    HalfAutoRifle() : Gun("HalfAutoRifle", 5.0f, 15, 15, 0.65f, 60, 10) {}
     void use(User& user, Map& map) override;  // fires 3 rounds at once
 };
 
 // ── Sidearm: small, low range, fast reload ──
 class Pistol : public Gun {
 public:
-    Pistol() : Gun("Pistol", 8, 8, 0.70f, 40, 6) {}
+    Pistol() : Gun("Pistol", 3.0f, 8, 8, 0.70f, 40, 6) {}
 };

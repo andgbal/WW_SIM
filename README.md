@@ -83,7 +83,7 @@ Engine (game loop + render + input)
 
 
 Storage system — what needs to change and where
-1. Inventory class — new file, replaces the raw vector
+1. Inventory class — new file, replaces the raw vector x
 Right now player.inventory is just std::vector<Item*>. Make it a proper class in character.hpp (or its own inventory.hpp). It should own:
 cppclass Inventory {
 public:
@@ -98,14 +98,14 @@ public:
 };
 Player then holds Inventory storage instead of std::vector<Item*> inventory.
 
-2. Item base class — needs a weight field
+2. Item base class — needs a weight field x
 Every item needs a weight so the inventory can enforce a limit. Add to item.hpp:
 cppint weight;  // set by each subclass constructor
 Each subclass constructor passes its weight up: Item("Shovel", 3), Item("Rifle", 5), Item("HealthKit", 1).
 
 3. Player — add a pickup(Item*) method
 The player shouldn't reach into their own inventory directly from the engine. Add:
-cppbool pickup(Item* item);   // delegates to storage.add(), checks weight
+bool pickup(Item* item);   // delegates to storage.add(), checks weight
 void dropItem(int idx);    // delegates to storage.drop()
 This keeps the engine's job simple: detect item on tile → call player.pickup(item).
 

@@ -18,3 +18,18 @@
 void HealthKit::use(User& user, Map& map){
     user.setHealth(user.getHealth() + healthRecover);
 }
+
+class Bandage : public HealthKit{
+public:
+    Bandage() : HealthKit("Bandage", 1.0f, 5) {}
+};
+
+class KitBox : public HealthKit{
+public:
+    KitBox() : HealthKit("kitBox", 2.0f, 20) {}
+};
+
+class MedicalBox : public HealthKit{
+public:
+    MedicalBox() : HealthKit("MedicalBox", 5.0f, 20) {}
+};

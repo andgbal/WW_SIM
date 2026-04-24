@@ -17,6 +17,35 @@ Position User::getTargetPos(int d) {
     return {pos.x - d, pos.y};
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void Zombie::update(Map& map, Position pPos) {
     int dist = std::abs(pos.x - pPos.x) + std::abs(pos.y - pPos.y);
     if (dist <= detectRadius && dist > 0) {

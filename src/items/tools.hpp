@@ -14,7 +14,7 @@ class HealthKit : public Item {
 protected:
     int healthRecover;
 public:
-    HealthKit(std::string name, int healthRecoverInit) : 
-        Item(name), healthRecover(healthRecoverInit) {};
+    HealthKit(std::string name, float weightInit, int healthRecoverInit) : 
+        Item(name, weightInit), healthRecover(healthRecoverInit) {};
     void use(User& user, Map& map) override;
 };

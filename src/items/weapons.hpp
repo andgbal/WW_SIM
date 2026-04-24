@@ -12,8 +12,8 @@ protected:
 
 public:
     // Pass a default name "Rifle" up to the Item constructor
-    Gun(std::string Name, int loadInit, int maxLoadInit, float accuracyInit, int damageInit, float rangeInit) 
-        : Item(Name), maxLoad(maxLoadInit), load(loadInit), accuracy(accuracyInit), damage(damageInit), range(rangeInit)
+    Gun(std::string Name, float weightInit, int loadInit, int maxLoadInit, float accuracyInit, int damageInit, float rangeInit) 
+        : Item(Name, weightInit), maxLoad(maxLoadInit), load(loadInit), accuracy(accuracyInit), damage(damageInit), range(rangeInit)
     {};
 
     void use(User& user, Map& map) override;

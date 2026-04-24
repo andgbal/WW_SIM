@@ -21,7 +21,32 @@ public:
 
     User(int x, int y, int h = 100) : Character(x, y, h) {}
     Position getTargetPos(int distance = 1);
+
+    void pickUpItem(Position position) {};
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class Zombie : public Character {
 public:
