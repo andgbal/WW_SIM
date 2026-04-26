@@ -18,11 +18,15 @@ class User : public Character {
 public:
     Dir facing = Dir::EAST;
     std::vector<Item*> inventory;
+    float currentWeight;
+    float maxWeight;
 
-    User(int x, int y, int h = 100) : Character(x, y, h) {}
+    User(int x, int y, int h = 100, float maxWeightInit = 15.0f) : Character(x, y, h), maxWeight(maxWeightInit) {}
     Position getTargetPos(int distance = 1);
 
-    void pickUpItem(Position position) {};
+    bool pickUpItem(Item* item) {}; //? what is this delete if not used
+    bool addToInventory(Item* item);      // weight check, then push_back
+    Item* removeFromInventory(int idx);   // erase + return pointer
 };
 
 

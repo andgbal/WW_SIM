@@ -5,7 +5,7 @@
 #include <cstdlib>   // rand()
 #include <iostream>
 
-void Gun::use(User& user, Map& map) {
+bool Gun::use(User& user, Map& map) {
     // 1. Ammo check
     if (load <= 0) {
         std::cout << name << ": *click* Out of ammo! Press R to reload.\n";
@@ -63,7 +63,7 @@ public:
 class HalfAutoRifle : public Gun {
 public:
     HalfAutoRifle() : Gun("HalfAutoRifle", 5.0f, 15, 15, 0.65f, 60, 10) {}
-    void use(User& user, Map& map) override;  // fires 3 rounds at once
+    bool use(User& user, Map& map) override;  // fires 3 rounds at once
 };
 
 // ── Sidearm: small, low range, fast reload ──

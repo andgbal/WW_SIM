@@ -1,4 +1,5 @@
 #include "terrain.hpp"
+#include"item.hpp"
 #include <cstdlib>
 #include <ctime>
 
@@ -33,4 +34,19 @@ bool Map::inVisionCone(Position p, Dir facing, int tx, int ty, int range) {
     if (facing == Dir::EAST)  return dx >= 0 && std::abs(dy) <= dx;
     if (facing == Dir::WEST)  return dx <= 0 && std::abs(dy) <= std::abs(dx);
     return false;
+}
+
+void Map::placeItem(Position pos, Item* item){
+    groundItems.push_back({pos, item});
+}
+
+Item* Map::takeItem(Position pos){
+    for (auto it = groundItems.begin(); it != groundItems.end(); ++it) {
+        if (it->pos.x == pos.x && it->pos.y == pos.y) {
+            Item* p = it->item;       // grab the raw ptr
+            groundItems.erase(it);    // remove the {pos, ptr} pair from map
+            return p;                 // hand ptr to caller
+        }
+    }
+    return nullptr;   // nothing on this tile
 }

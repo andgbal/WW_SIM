@@ -26,4 +26,15 @@ public:
     Map();
     Tile* getTile(int x, int y);
     bool inVisionCone(Position p, Dir facing, int tx, int ty, int range);
+
+    // In Map class:
+    struct GroundItem {
+        Position pos;
+        Item* item;   // non-owning
+    };
+    std::vector<GroundItem> groundItems;
+
+    void placeItem(Position pos, Item* item);   // add to groundItems
+    Item* takeItem(Position pos);               // remove + return pointer (or nullptr)
+    Item* peekItem(Position pos) const;         // check without removing
 };

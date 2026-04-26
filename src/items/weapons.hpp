@@ -16,7 +16,7 @@ public:
         : Item(Name, weightInit), maxLoad(maxLoadInit), load(loadInit), accuracy(accuracyInit), damage(damageInit), range(rangeInit)
     {};
 
-    void use(User& user, Map& map) override;
+    bool use(User& user, Map& map) override;
     void reload();
 };
 

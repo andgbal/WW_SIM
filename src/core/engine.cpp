@@ -4,6 +4,9 @@
 #include <iostream>
 #include <windows.h>
 
+//Spawning algo function required
+
+
 Engine::Engine() : user(25, 25), state(GameState::PLAYING), selectedItemIdx(0), running(true) {
     // Hide cursor for cleanliness
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -26,9 +29,18 @@ Engine::Engine() : user(25, 25), state(GameState::PLAYING), selectedItemIdx(0), 
 }
 
 void Engine::tick() {
+
     for (auto& z : zombies) {
         z.update(map, user.pos);
     }
+
+    Item* found = map.takeItem(user.pos);
+    if (found) {
+        bool success = user.addToInventory(found);
+        if (!success)
+            map.placeItem(user.pos, found);  // too heavy, put back
+    }
+
 }
 
 void Engine::render() {
@@ -98,6 +110,15 @@ void Engine::handleInput() {
         else if (in == 'j') { user.facing = Dir::WEST;  tookAction = true; }
         else if (in == 'l') { user.facing = Dir::EAST;  tookAction = true; }
         else if (in == 'e') state = GameState::INVENTORY;
+        else if (in == 'x'){
+            Item* dropped = user.removeFromInventory(selectedItemIdx);
+            map.placeItem(user.pos, dropped);
+
+
+                if (selectedItemIdx >= (int)user.inventory.size())
+                    selectedItemIdx = (int)user.inventory.size() - 1;
+                if (selectedItemIdx < 0) selectedItemIdx = 0;
+        }
         else if (in == 'q') running = false;
     } 
     else if (state == GameState::INVENTORY) {
@@ -105,7 +126,19 @@ void Engine::handleInput() {
         else if (in == 's' && selectedItemIdx < (int)user.inventory.size() - 1) selectedItemIdx++;
         else if (in == 'q') state = GameState::PLAYING;
         else if (in == 'f') {
-            user.inventory[selectedItemIdx]->use(user, map);
+            Item* selected = user.inventory[selectedItemIdx];
+            bool broken = selected->use(user, map);
+
+            if (broken) {
+                user.removeFromInventory(selectedItemIdx);  // step 1: out of inventory
+                destroyItem(selected);                       // step 2: deleted from heap
+                selected = nullptr;                          // step 3: don't leave a live var pointing to freed memory
+
+                if (selectedItemIdx >= (int)user.inventory.size())
+                    selectedItemIdx = (int)user.inventory.size() - 1;
+                if (selectedItemIdx < 0) selectedItemIdx = 0;
+            }
+
             state = GameState::PLAYING;
             tookAction = true;
         }

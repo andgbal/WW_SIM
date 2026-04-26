@@ -3,11 +3,11 @@
 #include <cmath>
 
 int Character::getHealth(){
-    return Character::health;
+    return health;
 }
 
 void Character::setHealth(int h){
-    Character::health = h;
+    health = h;
 }
 
 Position User::getTargetPos(int d) {
@@ -18,9 +18,21 @@ Position User::getTargetPos(int d) {
 }
 
 
+bool User::addToInventory(Item* item){
+    // check function of Map if the position, Item pair exeits 
+    if (currentWeight + item->getWeight() > maxWeight)
+        return false;
+    inventory.push_back(item);           // raw ptr copied into inventory
+    currentWeight += item->getWeight();
+    return true;
+}
 
-
-
+Item* User::removeFromInventory(int idx){
+    Item* p = inventory[idx];
+    currentWeight -= p->getWeight();
+    inventory.erase(inventory.begin() + idx);
+    return p;
+}
 
 
 

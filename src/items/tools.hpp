@@ -16,5 +16,5 @@ protected:
 public:
     HealthKit(std::string name, float weightInit, int healthRecoverInit) : 
         Item(name, weightInit), healthRecover(healthRecoverInit) {};
-    void use(User& user, Map& map) override;
+    bool use(User& user, Map& map) override;
 };

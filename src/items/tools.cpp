@@ -15,8 +15,9 @@
 //     std::cout << "Action: Dug a trench!\n";
 // }
 
-void HealthKit::use(User& user, Map& map){
+bool HealthKit::use(User& user, Map& map){
     user.setHealth(user.getHealth() + healthRecover);
+    return true;
 }
 
 class Bandage : public HealthKit{

@@ -13,7 +13,7 @@ public:
     explicit Item(std::string n, float weightInit) : name(std::move(n)), weight(weightInit) {}
 
     virtual ~Item() = default;
-    virtual void use(User& user, Map& map) = 0;
+    virtual bool use(User& user, Map& map) = 0;
 
     float getWeight();
     std::string getName();
