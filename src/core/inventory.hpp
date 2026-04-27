@@ -2,7 +2,7 @@
 #define INVENTORY_HPP
 
 #include <vector>
-#include "Item.hpp" // Assuming your Item class is defined here
+#include "../items/item.hpp" // Assuming your Item class is defined here
 
 class Inventory {
 private:

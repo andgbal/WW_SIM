@@ -7,12 +7,16 @@ enum class TerrainType { DIRT, TRENCH };
 enum class Dir { NORTH, SOUTH, EAST, WEST };
 struct Position { int x, y; };
 
+class Item;
+
 class Tile {
 public:
     TerrainType type = TerrainType::DIRT;
+    Item* groundItem = nullptr;
     bool hasZombie = false;
     char getSymbol() const {
         if (hasZombie) return 'Z';
+        if (groundItem) return 'i';
         if (type == TerrainType::TRENCH) return '#';
         return '.';
     }

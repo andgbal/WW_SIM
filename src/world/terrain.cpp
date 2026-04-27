@@ -36,17 +36,29 @@ bool Map::inVisionCone(Position p, Dir facing, int tx, int ty, int range) {
     return false;
 }
 
-void Map::placeItem(Position pos, Item* item){
+void Map::placeItem(Position pos, Item* item) {
     groundItems.push_back({pos, item});
+    Tile* tile = getTile(pos.x, pos.y);
+    if (tile) tile->groundItem = item;      // sync for rendering
 }
 
-Item* Map::takeItem(Position pos){
+Item* Map::takeItem(Position pos) {
     for (auto it = groundItems.begin(); it != groundItems.end(); ++it) {
         if (it->pos.x == pos.x && it->pos.y == pos.y) {
-            Item* p = it->item;       // grab the raw ptr
-            groundItems.erase(it);    // remove the {pos, ptr} pair from map
-            return p;                 // hand ptr to caller
+            Item* p = it->item;
+            groundItems.erase(it);
+            Tile* tile = getTile(pos.x, pos.y);
+            if (tile) tile->groundItem = nullptr;  // sync for rendering
+            return p;
         }
     }
-    return nullptr;   // nothing on this tile
+    return nullptr;
+}
+
+Item* Map::peekItem(Position pos) const {
+    for (const auto& g : groundItems) {
+        if (g.pos.x == pos.x && g.pos.y == pos.y)
+            return g.item;
+    }
+    return nullptr;
 }

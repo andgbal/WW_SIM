@@ -83,10 +83,20 @@ void Engine::render() {
     std::cout << "--- TRENCH ZOMBIES | STABLE VERSION ---\n";
     
     if (state == GameState::INVENTORY) {
-        std::cout << "\n  [ BACKPACK ]\n  W/S: Scroll | F: Use | Q: Close\n";
+        std::cout << "\n  [ BACKPACK ]  " 
+                << user.storage.getWeight() << " / " << user.maxWeight << " kg\n";
+        std::cout << "  W/S: Scroll | F: Use | X: Drop | Q: Close\n";
         std::cout << "  ------------------------------\n";
-        for (int i = 0; i < (int)user.inventory.size(); i++) {
-            std::cout << (i == selectedItemIdx ? " > " : "   ") << user.inventory[i]->name << "\n";
+
+        if (user.storage.count() == 0) {
+            std::cout << "   (empty)\n";
+        } else {
+            for (int i = 0; i < user.storage.count(); i++) {
+                Item* item = user.storage.get(i);
+                std::cout << (i == selectedItemIdx ? " > " : "   ")
+                        << item->getName()
+                        << "  " << item->getWeight() << "kg\n";
+            }
         }
         return;
     }
@@ -149,18 +159,18 @@ void Engine::handleInput() {
             map.placeItem(user.pos, dropped);
 
 
-                if (selectedItemIdx >= (int)user.inventory.size())
-                    selectedItemIdx = (int)user.inventory.size() - 1;
+                if (selectedItemIdx >= (int)user.storage.count())
+                    selectedItemIdx = (int)user.storage.count() - 1;
                 if (selectedItemIdx < 0) selectedItemIdx = 0;
         }
         else if (in == 'q') running = false;
     } 
     else if (state == GameState::INVENTORY) {
         if (in == 'w' && selectedItemIdx > 0) selectedItemIdx--;
-        else if (in == 's' && selectedItemIdx < (int)user.inventory.size() - 1) selectedItemIdx++;
+        else if (in == 's' && selectedItemIdx < (int)user.storage.count() - 1) selectedItemIdx++;
         else if (in == 'q') state = GameState::PLAYING;
         else if (in == 'f') {
-            Item* selected = user.inventory[selectedItemIdx];
+            Item* selected = user.storage.get(selectedItemIdx);
             bool broken = selected->use(user, map);
 
             if (broken) {
@@ -168,8 +178,8 @@ void Engine::handleInput() {
                 destroyItem(selected);                       // step 2: deleted from heap
                 selected = nullptr;                          // step 3: don't leave a live var pointing to freed memory
 
-                if (selectedItemIdx >= (int)user.inventory.size())
-                    selectedItemIdx = (int)user.inventory.size() - 1;
+                if (selectedItemIdx >= (int)user.storage.count())
+                    selectedItemIdx = (int)user.storage.count() - 1;
                 if (selectedItemIdx < 0) selectedItemIdx = 0;
             }
 

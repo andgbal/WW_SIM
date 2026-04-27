@@ -1,7 +1,6 @@
 #include "inventory.hpp"
 #include <iostream>
 
-Inventory::Inventory(float maxWeightInit) : MAX_WEIGHT(maxWeightInit) {}
 
 // Constructor initialization
 Inventory::Inventory(float maxWeightLimit) 
