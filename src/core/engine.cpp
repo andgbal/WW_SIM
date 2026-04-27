@@ -5,6 +5,23 @@
 #include <windows.h>
 
 //Spawning algo function required
+void Engine::spawnInitialItems() {
+    // Optional: spawn more randomly
+    for (int i = 0; i < 10; ++i) {
+        int x = rand() % map.width;
+        int y = rand() % map.height;
+        if (std::abs(x - 25) + std::abs(y - 25) > 8) {  // not too close to player
+            Item* item = nullptr;
+            int r = rand() % 4;
+            if (r == 0)      item = spawnItem<Rifle>();
+            else if (r == 1) item = spawnItem<Pistol>();
+            else if (r == 2) item = spawnItem<Bandage>();
+            else             item = spawnItem<KitBox>();
+
+            if (item) map.placeItem({x, y}, item);
+        }
+    }
+}
 
 
 Engine::Engine() : user(25, 25), state(GameState::PLAYING), selectedItemIdx(0), running(true) {
@@ -15,8 +32,23 @@ Engine::Engine() : user(25, 25), state(GameState::PLAYING), selectedItemIdx(0), 
     cursorInfo.bVisible = false;
     SetConsoleCursorInfo(out, &cursorInfo);
 
-    //user.inventory.push_back(new Shovel());
-    user.inventory.push_back(new Rifle());
+    //handle item spawn here
+    spawnInitialItems();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     for (int i = 0; i < 30; i++) {
         int zx = rand() % map.width;
@@ -27,6 +59,8 @@ Engine::Engine() : user(25, 25), state(GameState::PLAYING), selectedItemIdx(0), 
         }
     }
 }
+
+
 
 void Engine::tick() {
 

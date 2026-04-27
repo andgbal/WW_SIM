@@ -30,6 +30,8 @@ private:
         );
     }
 
+    void spawnInitialItems();
+
     GameState state;
     int selectedItemIdx;
     bool running;

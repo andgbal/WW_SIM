@@ -2,7 +2,7 @@
 #pragma once
 #include "item.hpp"
 
-class Gun : public Item {
+class Gun : public DurableItem {
 protected:
     int load;
     int maxLoad;
@@ -12,8 +12,8 @@ protected:
 
 public:
     // Pass a default name "Rifle" up to the Item constructor
-    Gun(std::string Name, float weightInit, int loadInit, int maxLoadInit, float accuracyInit, int damageInit, float rangeInit) 
-        : Item(Name, weightInit), maxLoad(maxLoadInit), load(loadInit), accuracy(accuracyInit), damage(damageInit), range(rangeInit)
+    Gun(std::string Name, float weightInit, int loadInit, int maxLoadInit, float accuracyInit, int damageInit, float rangeInit, double betaInit, double etaInit)
+        : DurableItem(Name, weightInit, betaInit, etaInit), maxLoad(maxLoadInit), load(loadInit), accuracy(accuracyInit), damage(damageInit), range(rangeInit)
     {};
 
     bool use(User& user, Map& map) override;
