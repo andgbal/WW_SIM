@@ -143,3 +143,22 @@ W/S: Scroll | F: Use | X: Drop | Q: Close
 
 Summary of files touched
 FileWhat changesitem.hppadd weight field to base classtools.hpp/.cpppass weight in each constructorweapons.hpp/.cpppass weight in each constructorcharacter.hppreplace vector<Item*> with Inventory storage; add pickup(), dropItem()character.cppimplement pickup(), dropItem()terrain.hppadd Item* groundItem to Tile; add placeItem/takeItem to Mapterrain.cppimplement placeItem, takeItemengine.cppupdate tick() for auto-pickup; update handleInput() for drop key; update render() inventory display
+
+
+Summary of Your Damage Flow Design
+Overall Flow:
+
+Generic Event / User Action (e.g. Gun::use(), future explosive, shovel attack, etc.)
+→ Calls a centralized model function, passing: Position, damage, accuracy, range, and damage type (line / tile).
+Model Layer handles the pure calculation:
+Line Damage: Starts from source position, travels in a direction (usually player's facing), applies damage along the line, stops at first entity hit.
+Tile Damage: Applies damage to a fixed shape/area of tiles around or in front of the source position (e.g. cone, circle, rectangle).
+
+Return Value: A struct containing a std::vector of hit positions + damage information.
+Engine receives the result and:
+Updates the Map (clear hasZombie, etc.).
+Triggers follow-up events (zombie death, sound, visual feedback, chain reactions).
+
+
+This is a solid evolution from the current line-only shooting in Gun::use().
+Comments on the Design
