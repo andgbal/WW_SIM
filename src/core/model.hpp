@@ -1,4 +1,5 @@
 #pragma once
+#include "../core/engine.hpp"
 #include <cmath>
 
 namespace Model {
@@ -12,5 +13,25 @@ namespace Model {
 
     // Convenience: decide if item breaks after current use
     bool willBreakOnNextUse(double currentUses, double beta, double eta);
+
+    // Damage system
+    enum class DamageType { LINE, CIRCLE, RECTANGLE };
+
+    struct DamageRequest {
+        Position origin;
+        Dir direction;
+        int damage;
+        float range;      // Radius for circle, length for line
+        float width;      // Used for rectangles or cones
+        DamageType type;
+    };
+
+    struct DamageReport {
+        struct Hit {
+            Position pos;
+            int damageDealt;
+        };
+        std::vector<Hit> actualHits; // Only tiles where an entity was found
+    };
 
 } // namespace Model

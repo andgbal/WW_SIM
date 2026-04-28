@@ -154,15 +154,6 @@ void Engine::handleInput() {
         else if (in == 'j') { user.facing = Dir::WEST;  tookAction = true; }
         else if (in == 'l') { user.facing = Dir::EAST;  tookAction = true; }
         else if (in == 'e') state = GameState::INVENTORY;
-        else if (in == 'x'){
-            Item* dropped = user.removeFromInventory(selectedItemIdx);
-            map.placeItem(user.pos, dropped);
-
-
-                if (selectedItemIdx >= (int)user.storage.count())
-                    selectedItemIdx = (int)user.storage.count() - 1;
-                if (selectedItemIdx < 0) selectedItemIdx = 0;
-        }
         else if (in == 'q') running = false;
     } 
     else if (state == GameState::INVENTORY) {
@@ -185,6 +176,15 @@ void Engine::handleInput() {
 
             state = GameState::PLAYING;
             tookAction = true;
+        }
+        else if (in == 'x'){
+            Item* dropped = user.removeFromInventory(selectedItemIdx);
+            map.placeItem(user.pos, dropped);
+
+
+                if (selectedItemIdx >= (int)user.storage.count())
+                    selectedItemIdx = (int)user.storage.count() - 1;
+                if (selectedItemIdx < 0) selectedItemIdx = 0;
         }
     }
 

@@ -2,6 +2,19 @@
 #pragma once
 #include "item.hpp"
 
+enum class DamageType { NONE, EXACT, LINE, RADIUS };
+
+struct DamageRequest {
+    DamageType type = DamageType::NONE;
+    int damage = 0;
+    float range = 0.0f;
+};
+
+struct ActionResult {
+    bool itemWasDestroyed = false;
+    DamageRequest damageReq;
+};
+
 class Gun : public DurableItem {
 protected:
     int load;
@@ -16,7 +29,8 @@ public:
         : DurableItem(Name, weightInit, betaInit, etaInit), maxLoad(maxLoadInit), load(loadInit), accuracy(accuracyInit), damage(damageInit), range(rangeInit)
     {};
 
-    bool use(User& user, Map& map) override;
+    //bool use(User& user, Map& map) override;
+    virtual ActionResult use(User& user) = 0;
     void reload();
 };
 

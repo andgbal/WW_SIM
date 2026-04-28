@@ -4,6 +4,8 @@
 class User; // Forward declaration
 class Map;
 
+
+
 class Item {
 public:
     std::string name;
@@ -14,6 +16,7 @@ public:
 
     virtual ~Item() = default;
     virtual bool use(User& user, Map& map) = 0;
+    
 
     float getWeight();
     std::string getName();
@@ -41,7 +44,7 @@ public:
         : Item(n, w), beta(betaInit), eta(etaInit) {}
 
     // Derived classes implement effect, then call checkEndurance()
-    bool use(User& user, Map& map) override = 0;
+    virtual bool use(User& user) = 0;
 
 protected:
     bool checkWillBreakOnThisUse();   // pre-use check

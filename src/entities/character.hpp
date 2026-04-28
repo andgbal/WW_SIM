@@ -9,8 +9,8 @@ class Character {
 public:
     Character(int x, int y, int h) : pos({x, y}), health(h) {}
     Position pos;    
-    int getHealth() {};
-    void setHealth(int h) {};
+    int getHealth();
+    void setHealth(int h);
 protected:
     int health;
 };

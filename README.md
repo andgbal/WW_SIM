@@ -99,16 +99,60 @@ Summary of Your Damage Flow Design
 Overall Flow:
 
 Generic Event / User Action (e.g. Gun::use(), future explosive, shovel attack, etc.)
-→ Calls a centralized model function, passing: Position, damage, accuracy, range, and damage type (line / tile).
-Model Layer handles the pure calculation:
-Line Damage: Starts from source position, travels in a direction (usually player's facing), applies damage along the line, stops at first entity hit.
-Tile Damage: Applies damage to a fixed shape/area of tiles around or in front of the source position (e.g. cone, circle, rectangle).
 
-Return Value: A struct containing a std::vector of hit positions + damage information.
-Engine receives the result and:
-Updates the Map (clear hasZombie, etc.).
-Triggers follow-up events (zombie death, sound, visual feedback, chain reactions).
+When the player decides to use an item (like firing a rifle), the game follows this sequence:
 
+Input Phase (Engine): The Engine detects the 'F' key. It identifies which item is selected in the Player’s inventory.
 
-This is a solid evolution from the current line-only shooting in Gun::use().
-Comments on the Design
+Intent Phase (Item): The Engine calls item->use(). The Item checks its own internal state (Does it have ammo? Does it break?). Instead of changing the world, it returns an ActionResult (a "wish list" of what it wants to happen).
+
+Calculation Phase (Model): The Engine takes that "wish list" (DamageRequest) and hands it to the Model. The Model looks at the Map and calculates the physics: "If a bullet starts here and goes North for 5 tiles, which coordinates does it actually hit?"
+
+Execution Phase (Engine): The Model gives the Engine a DamageReport (a list of coordinates). The Engine then loops through those coordinates and tells the Map: tile->hasZombie = false.
+
+Cleanup Phase (Engine): If the Item reported that it broke during use, the Engine removes it from the master list and deletes the memory.
+
+Revised general item use system
+
+I. Core Concept SummaryThe system operates on a Tri-Phase Loop:
+
+Intent (The Item/Entity): The object defines what it wants to do but does not change the map itself. It returns a "wish list" of changes.
+
+Calculation (The Model): A stateless math library that converts abstract ideas (like "Blast Radius") into concrete targets (specific memory addresses).
+
+Execution (The Engine): The only part of the code allowed to modify memory. It processes the list of "Atomic Changes" and logs errors if an action is invalid.
+
+II. Memory & Ownership BlueprintTo maintain a strict "XOR" relationship (an item is either on the map or in the bag), we use a Master Vault strategy:ComponentResponsibilityMemory TypeAccess RoleEngineOwns the world.std::unique_ptr<T>Master Owner: Manages the lifecycle and deletion.UserCarries items.GameEntity* (Raw)Observer: Just "holds" a reference to the master item.MapDisplays tiles/items.Tile (Unique) / Item* (Raw)Stage: Manages the grid; observes items on the ground.Change PacketTransmits intent.struct GameChangeMessenger: A temporary stack object.
+
+III. Coding Reference Blueprint1. The Atomic Change (The Universal Language)This struct is the only thing the use() function returns.
+
+```C++
+struct GameChange {
+    GameEntity* target;     // The "Who" (Direct Pointer)
+    std::string property;   // The "What" (Hashed String)
+    int delta;              // The "How much" (+/- value)
+};
+```
+2. The Base Class (The Solid Interface)Every object that can be "hit" or "changed" inherits from this.
+```C++
+class GameEntity {
+public:
+    virtual void applyChange(const std::string& prop, int val) = 0;
+};
+```
+
+3. The Property Hash (The Speed Booster)Inside each class, we use a switch with hashed strings to ensure $O(1)$ performance.
+
+```C++
+void Zombie::applyChange(const std::string& prop, int val) {
+    switch (hash(prop.c_str())) {
+        case hash("health"): 
+            this->hp += val; 
+            break;
+        default: 
+            std::cout << "[ERROR] Property not found: " << prop; 
+            break;
+    }
+}
+```
+IV. Why this is the "Pro" MoveDecoupling: Your Gun doesn't need to know how a Zombie works. It just needs to know it has a "health" property.Safety: By using the Engine as the central executor, you prevent "Dangling Pointers." You only delete objects at the very end of the frame after all changes are processed.Infinite Scale:Want a Shovel? Return {TilePtr, "terrain", TRENCH_ID}.Want a Gas Mask? Return {UserPtr, "gas_resistance", 1}.Want a Trench Flare? Return {TilePtr, "visibility", 10}.V. Future Blueprint: The "Post-Action" PhaseWhen you start coding, implement in this order:Definitions: Set up the GameChange struct and GameEntity base class.The Dispatcher: Write the Engine::processChanges loop.The Model: Write the math for line-of-sight (Guns) and radius (Explosion
